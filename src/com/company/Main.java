@@ -21,7 +21,6 @@ public class Main {
             return;
         }
 
-//        String hostUrlsFilePath = "/home/j0sh/Dropbox/code/Java/hosts/host_urls.txt";
         String hostUrlsFilePath = args[0];
         ArrayList<String> hostUrls = new ArrayList<>();
         try {
@@ -55,7 +54,6 @@ public class Main {
                 })
                 .get()
                 .parallelStream()
-                /*now the string set*/
                 .map(string -> "0.0.0.0 " + string)
                 .forEachOrdered(System.out::println);
     }
