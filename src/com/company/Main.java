@@ -10,8 +10,9 @@ public class Main {
     private static String hostnamePath = "/etc/hostname";
     private static String headder = "# hosts file made by j0sh\n" +
             "127.0.0.1 %s # current hostname for this machine\n" +
+            "::1 %s # current hostname for this machine\n" +
             "127.0.0.1 localhost # IPv4 localhost\n" +
-            "::1 localhost #IPv6 localhost";
+            "::1 localhost #IPv6 localhost\n";
 
     public static void main(String[] args) {
 
@@ -31,8 +32,9 @@ public class Main {
                     .filter(s -> (!s.isEmpty()))
                     .collect(Collectors.toCollection(ArrayList::new));
         } catch (FileNotFoundException e) {
+//            e.printStackTrace();
             System.err.println("Could not read input file");
-            e.printStackTrace();
+            return;
         }
 
         /*print the header and hostname*/
@@ -43,9 +45,10 @@ public class Main {
             System.err.println("Could not read hostname, defaulting to localhost");
             e.printStackTrace();
         }
-        System.out.println(String.format(headder, hostname));
+        System.out.println(String.format(headder, hostname, hostname));
 
         /*download and build the host list and then format and print it*/
+        StringBuilder builder = new StringBuilder();
         hostUrls.parallelStream()
                 .map(Main::downloadToSet)
                 .reduce((strings, strings2) -> {
@@ -53,9 +56,8 @@ public class Main {
                     return strings;
                 })
                 .get()
-                .parallelStream()
-                .map(string -> "0.0.0.0 " + string)
-                .forEachOrdered(System.out::println);
+                .forEach(builder::append);
+        System.out.println(builder.toString());
     }
 
     private static Set<String> downloadToSet(String url) {
@@ -76,14 +78,13 @@ public class Main {
         return lines.parallelStream()
                 /*Allow C and Python style comments*/
                 .filter(s -> (!s.startsWith("#") && !s.startsWith("//")))
-                .map(line -> {
-                    return line
-                            .replace("127.0.0.1", "")
-                            .replace("0.0.0.0", "")
-                            .replace("\t", "")
-                            .replace(" ", "");
-                })
                 .filter(s -> (!s.isEmpty()))
+                .map(line -> "0.0.0.0 " + line
+                        .replace("127.0.0.1", "")
+                        .replace("0.0.0.0", "")
+                        .replace("\t", "")
+                        .replace(" ", "")
+                        + "\n")
                 .collect(Collectors.toSet());
     }
 }
