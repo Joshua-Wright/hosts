@@ -28,6 +28,7 @@ public class Main {
             System.out.println("Optional: ");
             System.out.println(" -nh           do not print the header");
             System.out.println(" -w <file>     ignore the hosts specified in file");
+            System.out.println(" -h            use specified hostname");
             return;
         }
 
