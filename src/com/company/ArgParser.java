@@ -1,7 +1,5 @@
 package com.company;
 
-import sun.rmi.server.InactiveGroupException;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -77,7 +75,7 @@ public class ArgParser {
 
     /* test case*/
     public static void main(String[] args) {
-        String[] testCase = "-a 4 -v".split(" ");
+        String[] testCase = " asdf -a 4 -v".split(" ");
         int key_a = 1;
         int key_b = 2;
         int key_v = 3;
@@ -93,6 +91,7 @@ public class ArgParser {
         test(parser.isPresent(key_v), "is present v");
         test(!parser.isPresent(key_b), "is present b");
         test(parser.getValue(key_d).equals("5"), "key value");
+        test(parser.getMiscArgs().get(0).equals("asdf"), "misc args");
     }
 
     private static void test(boolean expr, String message) {

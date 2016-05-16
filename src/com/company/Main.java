@@ -14,11 +14,13 @@ public class Main {
             "::1 localhost #IPv6 localhost\n";
     private static int KEY_NO_HEADDER = 1;
     private static int KEY_WHITELIST_PATH = 2;
+    private static int KEY_HOSTNAME = 3;
 
     public static void main(String[] args) {
         ArgParser arglist = new ArgParser()
                 .putIfPresent("-nh", KEY_NO_HEADDER)
                 .putKeyValue("-w", KEY_WHITELIST_PATH)
+                .putKeyValue("-h", KEY_HOSTNAME)
                 .parse(args);
         if (arglist.getMiscArgs().size() < 1) {
             System.out.println("Usage: java -jar <this .jar file> <path to URL file>");
@@ -34,18 +36,21 @@ public class Main {
         if (arglist.isPresent(KEY_WHITELIST_PATH)) {
             /*addAll instead of assignment so that the variable may be final*/
             readFileByLines(arglist.getValue(KEY_WHITELIST_PATH))
-                    .stream()
                     .forEach(whitelist::add);
         }
 
         /*print the header and hostname*/
         if (!arglist.isPresent(KEY_NO_HEADDER)) {
             String hostname = "localhost";
-            try {
-                hostname = new BufferedReader(new FileReader(hostnamePath)).readLine();
-            } catch (IOException e) {
-                System.err.println("Could not read hostname, defaulting to localhost");
-                e.printStackTrace();
+            if (arglist.isPresent(KEY_HOSTNAME)) {
+                hostname = arglist.getValue(KEY_HOSTNAME);
+            } else {
+                try {
+                    hostname = new BufferedReader(new FileReader(hostnamePath)).readLine();
+                } catch (IOException e) {
+                    System.err.println("Could not read hostname, defaulting to localhost");
+                    e.printStackTrace();
+                }
             }
             System.out.println(String.format(headder, hostname, hostname));
         }
