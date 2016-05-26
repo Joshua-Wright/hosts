@@ -12,13 +12,14 @@ public class Main {
             "::1 %s # current hostname for this machine\n" +
             "127.0.0.1 localhost # IPv4 localhost\n" +
             "::1 localhost #IPv6 localhost\n";
-    private static int KEY_NO_HEADDER = 1;
-    private static int KEY_WHITELIST_PATH = 2;
-    private static int KEY_HOSTNAME = 3;
+    private static int id;
+    private static final int KEY_NO_HEADER = id++;
+    private static final int KEY_WHITELIST_PATH = id++;
+    private static final int KEY_HOSTNAME = id++;
 
     public static void main(String[] args) {
         ArgParser arglist = new ArgParser()
-                .putIfPresent("-nh", KEY_NO_HEADDER)
+                .putIfPresent("-nh", KEY_NO_HEADER)
                 .putKeyValue("-w", KEY_WHITELIST_PATH)
                 .putKeyValue("-h", KEY_HOSTNAME)
                 .parse(args);
@@ -41,7 +42,7 @@ public class Main {
         }
 
         /*print the header and hostname*/
-        if (!arglist.isPresent(KEY_NO_HEADDER)) {
+        if (!arglist.isPresent(KEY_NO_HEADER)) {
             String hostname = "localhost";
             if (arglist.isPresent(KEY_HOSTNAME)) {
                 hostname = arglist.getValue(KEY_HOSTNAME);
